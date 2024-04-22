@@ -11,7 +11,7 @@ namespace Polygonal_Library{
 
 struct PolygonalMesh
 {
-    // Definisco le struttre dati dove verranno salvate le informazioni delle varie celle.
+    // Definisco le strutture dati dove verranno salvate le informazioni delle varie celle.
 
     unsigned int n0D = 0;
     vector<unsigned int> Id0D = {};

@@ -20,6 +20,7 @@ int main()
     //Verifico che l'import dei file e i test della mesh vadano a buon fine.
     if(!ImportMesh(filepath,mesh,eps_scaling))
     {
+        cerr << "Mesh non valida." << endl;
         return 1;
     }
     cout << "Mesh valida.";
