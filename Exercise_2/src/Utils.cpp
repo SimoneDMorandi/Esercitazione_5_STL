@@ -66,7 +66,7 @@ bool ImportMesh(const string& filepath, PolygonalMesh& mesh, double scaling)
         return false;
     }
 
-    // Controllo che nessun poligono abbia area nulla.
+    // TEST 4: Controllo che nessun poligono abbia area nulla.
     if(!CheckEdges(mesh, scaling))
     {
         return false;
@@ -135,7 +135,7 @@ bool ImportCell0Ds(const string &filename,PolygonalMesh& mesh)
         mesh.Id0D.push_back(id);
         mesh.Coord0D.push_back(coord);
 
-        // Se non mi trovo sul lato del dominio (marker ==0), memorizzo marker e ID.
+        // Se non mi trovo sul lato del dominio (marker == 0), memorizzo marker e ID.
         if(marker != 0)
         {
             auto ret = mesh.Marker0D.insert({marker, {id}});
@@ -214,7 +214,7 @@ bool ImportCell1Ds(const string &filename,PolygonalMesh& mesh)
         mesh.Id1D.push_back(id);
         mesh.Vertices1D.push_back(vertices);
 
-        // Se non mi trovo sul lato del dominio (marker ==0), memorizzo marker e ID.
+        // Se non mi trovo sul lato del dominio (marker == 0), memorizzo marker e ID.
         if(marker != 0)
         {
             auto ret = mesh.Marker1D.insert({marker, {id}});
