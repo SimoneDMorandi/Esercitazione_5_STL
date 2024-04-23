@@ -19,7 +19,7 @@ bool ImportMesh(const string& filepath, PolygonalMesh& mesh, double scaling)
     }
     else
     {
-        // Test 1: Verifico che i punti siano memorizzati correttamente, stampando ogni marker e i punti ad esso associati.
+        // Test 1 : Verifico che i punti siano memorizzati correttamente, stampando ogni marker e i punti ad esso associati.
         cout << "Test 1"<< endl;
         cout << "Cell0D Markers:" << endl;
         for(auto iterator = mesh.Marker0D.begin(); iterator != mesh.Marker0D.end(); iterator++)
@@ -57,7 +57,7 @@ bool ImportMesh(const string& filepath, PolygonalMesh& mesh, double scaling)
         cout << endl;
     }
 
-    // TEST 3: Controllo che nessun lato abbia lunghezza nulla.
+    // TEST 3 : Controllo che nessun lato abbia lunghezza nulla.
     cout << "Test 3: ";
     if(!CheckVertices(mesh, scaling))
     {
@@ -72,7 +72,7 @@ bool ImportMesh(const string& filepath, PolygonalMesh& mesh, double scaling)
     }
     cout << "Importazione delle celle 2D avvenuta con successo." << endl << endl;
 
-    // TEST 4: Controllo che nessun poligono abbia area nulla.
+    // TEST 4 : Controllo che nessun poligono abbia area nulla.
     cout << "Test 4: ";
     if(!CheckEdges(mesh, scaling))
     {
