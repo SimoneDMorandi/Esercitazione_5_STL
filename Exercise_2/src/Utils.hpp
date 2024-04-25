@@ -9,7 +9,7 @@ namespace Polygonal_Library {
 
 /* Definisco la funzione che controlla se l'import è avvenuto correttamente
 ed esegue qualche test sulla mesh.*/
-bool ImportMesh(const string &filepath, PolygonalMesh& mesh, double scaling);
+bool ImportMesh(const string &filepath, PolygonalMesh& mesh, double& scaling);
 
 // Definisco la funzione che importa le informazioni sui nodi.
 bool ImportCell0Ds(const string &filename, PolygonalMesh& mesh);
@@ -21,9 +21,12 @@ bool ImportCell1Ds(const string &filename, PolygonalMesh& mesh);
 bool ImportCell2Ds(const string &filename, PolygonalMesh& mesh);
 
 // Definisco la funzione che controlla la lunghezza dei lati.
-bool CheckVertices(PolygonalMesh& mesh,double scaling);
+bool CheckLength(PolygonalMesh& mesh, double& scaling);
+
+// Definisco la funzione che controlla la corrispondenza tra lati 1D e 2D.
+bool CheckVertices2D(PolygonalMesh& mesh);
 
 // Definisco la funzione che controlla le aree dei poligoni.
-bool CheckEdges(PolygonalMesh& mesh, double scaling);
+bool CheckArea(PolygonalMesh& mesh, double& scaling);
 
 }

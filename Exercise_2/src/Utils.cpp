@@ -8,8 +8,8 @@
 namespace Polygonal_Library {
 
 
-// Corpo della funzione di verifica della validità della mesh.
-bool ImportMesh(const string& filepath, PolygonalMesh& mesh, double scaling)
+// Corpo della funzione di verifica della validità della Mesh.
+bool ImportMesh(const string& filepath, PolygonalMesh& mesh, double &scaling)
 {
     // Controllo che l'importazione delle celle 0D vada a buon fine.
     if(!ImportCell0Ds(filepath + "/Cell0Ds.csv",mesh))
@@ -59,7 +59,8 @@ bool ImportMesh(const string& filepath, PolygonalMesh& mesh, double scaling)
 
     // TEST 3 : Controllo che nessun lato abbia lunghezza nulla.
     cout << "Test 3: ";
-    if(!CheckVertices(mesh, scaling))
+    cout.flush();      // Il flush viene inserito per questioni di leggibilità dell'output in caso di errore.
+    if(!CheckLength(mesh, scaling))
     {
         return false;
     }
@@ -72,9 +73,19 @@ bool ImportMesh(const string& filepath, PolygonalMesh& mesh, double scaling)
     }
     cout << "Importazione delle celle 2D avvenuta con successo." << endl << endl;
 
-    // TEST 4 : Controllo che nessun poligono abbia area nulla.
+    // TEST 4 : Controllo che ci sia corrispondenza tra i lati 1D e 2D.
     cout << "Test 4: ";
-    if(!CheckEdges(mesh, scaling))
+    cout.flush();
+    if(!CheckVertices2D(mesh))
+    {
+        return false;
+    }
+    cout << "Corrispondenza tra lati 1D e 2D valida." << endl << endl;
+
+    // TEST 5 : Controllo che nessun poligono abbia area nulla.
+    cout << "Test 5: ";
+    cout.flush();
+    if(!CheckArea(mesh, scaling))
     {
         return false;
     }
@@ -242,7 +253,7 @@ bool ImportCell1Ds(const string &filename,PolygonalMesh& mesh)
 }
 
 // Corpo della funzione di controllo dei lati.
-bool CheckVertices(PolygonalMesh& mesh, double scaling)
+bool CheckLength(PolygonalMesh& mesh, double &scaling)
 {
     // Definisco la precisione personalizzata.
     double eps = numeric_limits<double>::epsilon()*scaling;
@@ -351,8 +362,64 @@ bool ImportCell2Ds(const string &filename,PolygonalMesh& mesh)
     return true;
 }
 
+// Corpo della funzione che verifica la corrispondenza tra i lati 1D e 2D.
+bool CheckVertices2D(PolygonalMesh& mesh)
+{
+    for(const auto& vertices : mesh.Vertices2D)
+    {
+        // Imposto una flag per la conferma della corrispondenza.
+        bool found = false;
+
+        // Scorro il contenitore dei vertici per ogni poligono.
+        for(unsigned int i = 0; i < vertices.size(); i++)
+        {
+            // Confronto le coppie di vertici con le coppie di lati.
+            if(i != vertices.size() -1)
+            {
+                Vector2i to_find(vertices(i),vertices(i+1));
+                for(const auto& vertices_couple : mesh.Vertices1D)
+                {
+                    // Considero anche le coppie di vertici invertite, dato che sono comunque valide.
+                    Vector2i swapped(vertices_couple[1],vertices_couple[0]);
+                    if(to_find == vertices_couple || to_find == swapped)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if(!found)
+                {
+                    cerr << "I lati 2D non corrispondono ai lati 1D." << endl;
+                    return false;
+                }
+            }
+
+            // Confronto la coppia del primo vertice e l'ultimo con le coppie di lati allo stesso modo.
+            else
+            {
+                Vector2i to_find(vertices(i),vertices(0));
+                for(const auto& vertices_couple : mesh.Vertices1D)
+                {
+                    Vector2i swapped(vertices_couple[1],vertices_couple[0]);
+                    if(to_find == vertices_couple || to_find == swapped)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if(!found)
+                {
+                    cerr << "I lati 2D non corrispondono ai lati 1D." << endl;
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
 // Corpo della funzione di controllo delle aree.
-bool CheckEdges(PolygonalMesh& mesh, double scaling)
+bool CheckArea(PolygonalMesh& mesh, double &scaling)
 {
     // Definisco la precisione personalizzata
     double eps = numeric_limits<double>::epsilon()*scaling;
