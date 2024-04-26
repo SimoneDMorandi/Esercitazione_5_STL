@@ -89,12 +89,12 @@ bool ImportMesh(const string& filepath, PolygonalMesh& mesh, double &scaling)
     {
         return false;
     }
-    cout << "Area dei poligoni valida." << endl;
+    cout << "Area dei poligoni valida." << endl << endl;
 
     return true;
 }
 
-// Importo e memorizzo le informazioni relative alle celle 1D.
+// Importo e memorizzo le informazioni relative alle celle 0D.
 bool ImportCell0Ds(const string &filename,PolygonalMesh& mesh)
 {
     // Apro il file e controllo che l'apertura vada a buon fine.
@@ -427,6 +427,9 @@ bool CheckArea(PolygonalMesh& mesh, double &scaling)
     // Scorro il contenitore dei lati di ogni poligono.
     for(const auto& edges : mesh.Edges2D)
     {
+        // Definisco il contatore di lati paralleli (prodotto vettoriale == 0)
+        unsigned int counter_zeros = 0;
+
         /* Calcolo il prodotto vettoriale tra lati successivi, accedendo prima al
            vettore contenente i lati, poi a quello dei punti, poi a quello delle coordinate.*/
         for(unsigned int i = 0; i <edges.size(); i++)
@@ -443,10 +446,11 @@ bool CheckArea(PolygonalMesh& mesh, double &scaling)
                 Vector2d coord_point_D = mesh.Coord0D[points_edge_b(1)]; // D = [x4,y4]
                 Vector2d length_b = coord_point_D-coord_point_C;  // D-C
                 double cross_prod = length_a.x() * length_b.y() - length_a.y() * length_b.x(); // (a)x(b)
+
+                // Controllo se il prodotto scalare è sotto la tolleranza impostata.
                 if(abs(cross_prod) < eps)
                 {
-                    cerr << "Ci sono dei poligoni con area nulla." << endl;
-                    return false;
+                    counter_zeros ++;
                 }
             }
 
@@ -458,16 +462,23 @@ bool CheckArea(PolygonalMesh& mesh, double &scaling)
                 Vector2d coord_point_B = mesh.Coord0D[points_edge_a(1)];
                 Vector2d length_a = coord_point_B-coord_point_A;
                 Vector2i points_edge_b = mesh.Vertices1D[edges(0)];
-                Vector2d coord_point_D = mesh.Coord0D[points_edge_b(0)];
-                Vector2d coord_point_C = mesh.Coord0D[points_edge_b(1)];
-                Vector2d length_b = coord_point_C-coord_point_D;
+                Vector2d coord_point_C = mesh.Coord0D[points_edge_b(0)];
+                Vector2d coord_point_D = mesh.Coord0D[points_edge_b(1)];
+                Vector2d length_b = coord_point_D-coord_point_C;
                 double cross_prod = length_a.x() * length_b.y() - length_a.y() * length_b.x();
                 if(abs(cross_prod) < eps)
                 {
-                    cerr << "Ci sono dei poligoni con area nulla." << endl;
-                    return false;
+
+                    counter_zeros ++;
                 }
             }
+
+        // Verifico se tutti i lati del poligono sono paralleli, cioè se il poligono è degenere.
+        if(counter_zeros == edges.size())
+        {
+            cerr << "Ci sono dei poligoni con area nulla." << endl;
+            return false;
+        }
     }
     return true;
 }
